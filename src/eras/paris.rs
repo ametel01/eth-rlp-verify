@@ -63,32 +63,40 @@ impl BlockHeaderParis {
     /// # Returns
     ///
     /// A `BlockHeaderParis` instance with parsed and populated fields.
-    pub fn from_db_header(db_header: VerifiableBlockHeader) -> Self {
+    pub fn from_db_header(db_header: &VerifiableBlockHeader) -> Self {
         let logs_bloom = <Self as BlockHeaderTrait>::hex_to_fixed_array::<256>(
-            &db_header.logs_bloom.unwrap_or_default(),
+            &db_header.logs_bloom.clone().unwrap_or_default(),
         );
         let nonce = <Self as BlockHeaderTrait>::hex_to_fixed_array::<8>(&db_header.nonce);
 
         BlockHeaderParis {
-            parent_hash: H256::from_str(&db_header.parent_hash.unwrap_or_default()).unwrap(),
-            ommers_hash: H256::from_str(&db_header.sha3_uncles.unwrap_or_default()).unwrap(),
-            beneficiary: H160::from_str(&db_header.miner.unwrap_or_default()).unwrap(),
-            state_root: H256::from_str(&db_header.state_root.unwrap_or_default()).unwrap(),
-            transactions_root: H256::from_str(&db_header.transaction_root.unwrap_or_default())
+            parent_hash: H256::from_str(&db_header.parent_hash.clone().unwrap_or_default())
                 .unwrap(),
-            receipts_root: H256::from_str(&db_header.receipts_root.unwrap_or_default()).unwrap(),
+            ommers_hash: H256::from_str(&db_header.sha3_uncles.clone().unwrap_or_default())
+                .unwrap(),
+            beneficiary: H160::from_str(&db_header.miner.clone().unwrap_or_default()).unwrap(),
+            state_root: H256::from_str(&db_header.state_root.clone().unwrap_or_default()).unwrap(),
+            transactions_root: H256::from_str(
+                &db_header.transaction_root.clone().unwrap_or_default(),
+            )
+            .unwrap(),
+            receipts_root: H256::from_str(&db_header.receipts_root.clone().unwrap_or_default())
+                .unwrap(),
             logs_bloom,
-            difficulty: U256::from_str(&db_header.difficulty.unwrap_or("0x0".to_string())).unwrap(),
+            difficulty: U256::from_str(&db_header.difficulty.clone().unwrap_or("0x0".to_string()))
+                .unwrap(),
             number: U256::from(db_header.number as u64),
             gas_limit: U256::from(db_header.gas_limit as u64),
             gas_used: U256::from(db_header.gas_used as u64),
-            timestamp: U256::from_str(&db_header.timestamp.unwrap_or_default()).unwrap(),
-            extra_data: hex::decode(&db_header.extra_data.unwrap_or_default()[2..])
+            timestamp: U256::from_str(&db_header.timestamp.clone().unwrap_or_default()).unwrap(),
+            extra_data: hex::decode(&db_header.extra_data.clone().unwrap_or_default()[2..])
                 .unwrap_or_default(),
-            mix_hash: H256::from_str(&db_header.mix_hash.unwrap_or_default()).unwrap(),
+            mix_hash: H256::from_str(&db_header.mix_hash.clone().unwrap_or_default()).unwrap(),
             nonce,
-            base_fee_per_gas: U256::from_str(&db_header.base_fee_per_gas.unwrap_or_default())
-                .unwrap(),
+            base_fee_per_gas: U256::from_str(
+                &db_header.base_fee_per_gas.clone().unwrap_or_default(),
+            )
+            .unwrap(),
         }
     }
 }
@@ -154,7 +162,7 @@ impl BlockHeaderTrait for BlockHeaderParis {
 ///     println!("Invalid block hash.");
 /// }
 /// ```
-pub fn verify_hash_paris(block_hash: String, db_header: VerifiableBlockHeader) -> bool {
+pub fn verify_hash_paris(block_hash: String, db_header: &VerifiableBlockHeader) -> bool {
     let header = BlockHeaderParis::from_db_header(db_header);
 
     // Log the RLP encoded data for debugging purposes

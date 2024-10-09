@@ -65,7 +65,7 @@ pub use shapella::verify_hash_shapella;
 /// # Notes
 ///
 /// - If the block number falls outside the recognized eras, this function will return `None`.
-pub fn determine_era(block_number: u64) -> Option<fn(String, VerifiableBlockHeader) -> bool> {
+pub fn determine_era(block_number: u64) -> Option<fn(String, &VerifiableBlockHeader) -> bool> {
     if (LONDON_START..=LONDON_END).contains(&block_number) {
         Some(verify_hash_london)
     } else if (PARIS_START..=PARIS_END).contains(&block_number) {

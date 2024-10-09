@@ -55,7 +55,7 @@ use crate::block_header::BlockHeader as VerifiableBlockHeader;
 ///   by simply adding them to the `eras::determine_era` function.
 pub fn verify_block(
     block_number: u64,
-    block_header: VerifiableBlockHeader,
+    block_header: &VerifiableBlockHeader,
     block_hash: &str,
 ) -> bool {
     match eras::determine_era(block_number) {
